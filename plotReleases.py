@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
 	#colormap = cm.get_cmap('viridis', 12)
 	colormap = cm.get_cmap('turbo', 12)
-	norm = mpl.colors.Normalize(vmin=0, vmax=max(countries.values()))
+	norm = mpl.colors.Normalize(vmin=1, vmax=max(countries.values()))
 
 	def getColor(country):
 		if( country in countries ):
@@ -81,8 +81,14 @@ if __name__ == "__main__":
 							  label=country.attributes['CONTINENT'])
 
 	plt.suptitle("Distributed Denial of Secrets\nWorldwide Release Coverage")
-	cax = fig.add_axes([0.95, 0.2, 0.02, 0.6])
-	cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, spacing="proportional")
+	#cax = fig.add_axes([0.95, 0.2, 0.02, 0.6])
+	#cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, spacing="proportional")
+	min_tick = 1
+	max_tick = max(countries.values())
+	ticks = list(map(lambda c: int(c), np.linspace(min_tick,max_tick,10)))
+	cax = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+	cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, orientation="horizontal", ticks=ticks)
+	cax.set_xlabel("Datasets Originating in Each Country")
 
 	# Rescale the PNG based on the DPI of current image
 	# Trying _really hard_ not to have matplotlib rescale the image
