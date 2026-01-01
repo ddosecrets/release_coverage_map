@@ -1,6 +1,4 @@
 DDoSecrets Release Coverage Map
 ===============================
 
-Run `pullCategories.py` to get a CSV file of current countries from the DDoSecrets website.
-
-Run `plotReleases.py` to plot the CSV file as a colorscaled map.
+Run `plotReleases.py` to download the number of releases per country as JSON, then plot the results as a colorscaled map. If `countries.json` is present the script will plot the cached data instead of re-downloading it.

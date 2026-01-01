@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, csv
+import os, csv, requests, json
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import cartopy.io.shapereader as shpreader
@@ -12,6 +12,18 @@ from matplotlib import cm
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image
+
+def getCountries():
+	cachefile = "countries.json"
+	url = "https://ddosecrets.com/feed/countries.json"
+	if( os.path.isfile(cachefile) ):
+		with open(cachefile, "r") as f:
+			return json.loads(f.read())
+	else:
+		countries = requests.get(url).text
+		with open(cachefile, "w") as f:
+			f.write(countries)
+		return json.loads(countries)
 
 if __name__ == "__main__":
 	mpl.rcParams['figure.figsize'] = [5.12, 3.84]
@@ -33,22 +45,21 @@ if __name__ == "__main__":
 
 	countries = defaultdict(lambda: 0)
 	total_hosts = 0
-	with open("categories.csv") as csv_file:
-		file_read = csv.reader(csv_file)
-		for (country,count) in file_read:
-			try:
-				code = country_codes[country]
-				countries[code] += int(count)
-				total_hosts += int(count)
-			except KeyError:
-				print("ERROR: No country code for '%s', skipping..." % country)
-				pass
+	article_countries = getCountries()
+	for (country,count) in article_countries.items():
+		try:
+			code = country_codes[country]
+			countries[code] += int(count)
+			total_hosts += int(count)
+		except KeyError:
+			print("ERROR: No country code for '%s', skipping..." % country)
+			pass
 
 	countries_shp = shpreader.natural_earth(resolution='110m',
 											category='cultural', name='admin_0_countries')
 
-	#colormap = cm.get_cmap('viridis', 12)
-	colormap = cm.get_cmap('turbo', 12)
+	#colormap = plt.get_cmap('viridis', 12)
+	colormap = plt.get_cmap('turbo', 12)
 	norm = mpl.colors.Normalize(vmin=1, vmax=max(countries.values()))
 
 	def getColor(country):
@@ -64,7 +75,7 @@ if __name__ == "__main__":
 	# coordinates to whatever projection we actually want.
 	fig,ax = plt.subplots(figsize=(12,6), subplot_kw={"projection":ccrs.Robinson()})
 	# Remove the oval border on the map
-	ax.outline_patch.set_visible(False)
+	ax.set_frame_on(False)
 	blank_color = np.array([1,1,1])
 	transform_from = ccrs.PlateCarree()._as_mpl_transform(ax)
 	for country in shpreader.Reader(countries_shp).records():
