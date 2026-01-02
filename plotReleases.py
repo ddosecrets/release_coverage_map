@@ -59,7 +59,8 @@ if __name__ == "__main__":
 											category='cultural', name='admin_0_countries')
 
 	#colormap = plt.get_cmap('viridis', 12)
-	colormap = plt.get_cmap('turbo', 12)
+	#colormap = plt.get_cmap('turbo', 12)
+	colormap = plt.get_cmap('turbo')
 	#norm = mpl.colors.Normalize(vmin=1, vmax=max(countries.values()))
 	norm = mpl.colors.PowerNorm(vmin=1, vmax=max(countries.values()), gamma=0.4)
 
