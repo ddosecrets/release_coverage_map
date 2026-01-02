@@ -60,13 +60,13 @@ if __name__ == "__main__":
 
 	#colormap = plt.get_cmap('viridis', 12)
 	colormap = plt.get_cmap('turbo', 12)
-	norm = mpl.colors.Normalize(vmin=1, vmax=max(countries.values()))
+	#norm = mpl.colors.Normalize(vmin=1, vmax=max(countries.values()))
+	norm = mpl.colors.PowerNorm(vmin=1, vmax=max(countries.values()), gamma=0.4)
 
 	def getColor(country):
 		if( country in countries ):
 			count = countries[country]
-			total = max(countries.values())
-			return colormap(count/total)
+			return colormap(norm(count))
 		return np.array([1,1,1])
 
 	# NOTE: We set the projection at the _axis_ level,
@@ -96,7 +96,8 @@ if __name__ == "__main__":
 	#cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, spacing="proportional")
 	min_tick = 1
 	max_tick = max(countries.values())
-	ticks = list(map(lambda c: int(c), np.linspace(min_tick,max_tick,10)))
+	#ticks = list(map(lambda c: int(c), np.linspace(min_tick,max_tick,10)))
+	ticks = list(map(lambda c: int(norm.inverse(c)), np.linspace(0,1,12)))
 	cax = fig.add_axes([0.2, 0.05, 0.6, 0.02])
 	cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, orientation="horizontal", ticks=ticks)
 	cax.set_xlabel("Datasets Originating in Each Country")
@@ -105,7 +106,7 @@ if __name__ == "__main__":
 	# Trying _really hard_ not to have matplotlib rescale the image
 	# because it does a mediocre job 
 	array_ddosecrets = mpimg.imread("ddosecrets.png")
-	imagebox = OffsetImage(array_ddosecrets, zoom=72./fig.dpi)
+	imagebox = OffsetImage(array_ddosecrets, zoom=120./fig.dpi)
 	ab = AnnotationBbox(imagebox, (-140,-20), xycoords=transform_from, frameon=False)
 	ax.add_artist(ab)
 
