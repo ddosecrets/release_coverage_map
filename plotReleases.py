@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!venv/bin/python3
 import os, csv, requests, json
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
@@ -15,7 +15,7 @@ from PIL import Image
 
 def getCountries():
 	cachefile = "countries.json"
-	url = "https://ddosecrets.com/feed/countries.json"
+	url = "https://ddosecrets.org/feed/countries.json"
 	if( os.path.isfile(cachefile) ):
 		with open(cachefile, "r") as f:
 			return json.loads(f.read())
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 	min_tick = 1
 	max_tick = max(countries.values())
 	#ticks = list(map(lambda c: int(c), np.linspace(min_tick,max_tick,10)))
-	ticks = list(map(lambda c: int(norm.inverse(c)), np.linspace(0,1,12)))
+	ticks = list(map(lambda c: int(norm.inverse(c)), np.linspace(0,1,13)))
 	cax = fig.add_axes([0.2, 0.05, 0.6, 0.02])
 	cbar = mpl.colorbar.ColorbarBase(cax, cmap=colormap, norm=norm, orientation="horizontal", ticks=ticks)
 	cax.set_xlabel("Datasets Originating in Each Country")
